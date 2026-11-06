@@ -53,11 +53,7 @@ HOST=0.0.0.0
 PORT=5000
 ```
 
-Protect the file:
-
-```bash
-chmod 600 ~/cml-ise-mcp/mcp.log
-```
+Use the file as it exists in this lab. Do not change its permissions or contents.
 
 Read only the required named values. Do not use `source`, `.`, or `eval` on the file.
 
@@ -141,6 +137,15 @@ If password authentication is required:
 - never use `sshpass -p`,
 - never place the password on a command line.
 
+If `sshpass` is missing on the local agent device and password authentication is required, install this one local dependency:
+
+```bash
+sudo apt-get update
+sudo apt-get install -y sshpass
+```
+
+Do not install `sshpass` on the remote MCP server.
+
 Use the remote work directory from `MCP_REMOTE_WORKDIR`.
 
 If the directory already exists, stop. Do not delete, overwrite, reset, or reuse it.
@@ -217,13 +222,13 @@ $MCP_REMOTE_WORKDIR/.env
 Populate it from the ISE values in `~/cml-ise-mcp/mcp.log`:
 
 ```dotenv
-ISE_IP=<value from ise-mcp.log>
+ISE_IP=<value from mcp.log>
 API_PORT=443
-API_USERNAME=<value from ise-mcp.log>
-API_PWD=<value from ise-mcp.log>
+API_USERNAME=<value from mcp.log>
+API_PWD=<value from mcp.log>
 
-ISE_VERIFY_SERVER_CERT=true
-ISE_VERIFY_HOSTNAME=true
+ISE_VERIFY_SERVER_CERT=<value from mcp.log>
+ISE_VERIFY_HOSTNAME=<value from mcp.log>
 
 HOST=0.0.0.0
 PORT=5000
