@@ -1,261 +1,291 @@
 annotations: []
 smart_annotations: []
 nodes:
-  - boot_disk_size: null
-    configuration:
-      - name: ise-ztp.conf
-        content: |-
-          hostname=inserthostname
-          ipv4_addr=192.168.1.253
-          ipv4_mask=255.255.255.0
-          ipv4_default_gw=192.168.1.1
-          # IPv6 is optional
-          #ipv6_addr=<IPv6 address>
-          #ipv6_default_gw=<IPv6 gateway address>
-          domain=cisco.com
-          primary_nameserver=8.8.8.8
-          # secondary and tertiary are optional
-          #secondary_nameserver=<IPv4 address>
-          #tertiary_nameserver=<IPv4 address>
-          primary_ntpserver=time.google.com
-          #secondary and tertiary are optional
-          #secondary_ntpserver=<IPv4 address or FQDN of the NTP server>
-          #tertiary_ntpserver=<IPv4 address or FQDN of the NTP server>
-          #timezone=<timezone>
-          #ssh=<true/false>
-          #username=<admin>
-          password=Cisc01@3
-          # Public Key Authentication configuration is optional
-          #public_key=<Public Key>
-          # Repository Configuration are optional
-          #repository_name=<repository name>
-          #repository_protocol=<repository protocol>
-          #repository_server_name=<IPv4 address>
-          #repository_path=<repository path>
-          # Patch Information - optional
-          #patch=<patch filename>
-          # HotPatches Information - optional
-          #hotpatches=<hotpatch filename,comma separated list>
-          # services - optional
-          #ers=<true/false>
-          #openapi=<true/false>
-          #pxgrid=<true/false>
-          #pxGrid_Cloud=<true/false>
-          # Skipping specific checks
-          SkipIcmpChecks=true
-          SkipDnsChecks=true
-          SkipNtpChecks=true
-    cpu_limit: null
-    cpus: null
-    data_volume: null
-    hide_links: false
-    id: n0
-    image_definition: null
-    label: ise-0
-    node_definition: ise
-    parameters: {}
-    priority: null
-    pyats:
-      username: null
-      password: null
-      enable_password: null
-    ram: null
-    tags: []
-    x: 160
-    y: -200
-    interfaces:
-      - id: i0
-        label: lo
-        mac_address: null
-        type: loopback
-      - id: i1
-        label: eth0
-        mac_address: null
-        type: physical
-        slot: 0
-  - boot_disk_size: null
-    configuration:
-      - name: default
-        content: System Bridge
-    cpu_limit: null
-    cpus: null
-    data_volume: null
-    hide_links: false
-    id: n1
-    image_definition: null
-    label: ext-conn-0
-    node_definition: external_connector
-    parameters: {}
-    priority: null
-    pyats:
-      username: null
-      password: null
-      enable_password: null
-    ram: null
-    tags: []
-    x: -480
-    y: -200
-    interfaces:
-      - id: i0
-        label: port
-        mac_address: null
-        type: physical
-        slot: 0
-  - boot_disk_size: null
-    configuration: []
-    cpu_limit: null
-    cpus: null
-    data_volume: null
-    hide_links: false
-    id: n2
-    image_definition: null
-    label: unmanaged-switch-0
-    node_definition: unmanaged_switch
-    parameters: {}
-    priority: null
-    pyats:
-      username: null
-      password: null
-      enable_password: null
-    ram: null
-    tags: []
-    x: -120
-    y: -200
-    interfaces:
-      - id: i0
-        label: port0
-        mac_address: null
-        type: physical
-        slot: 0
-      - id: i1
-        label: port1
-        mac_address: null
-        type: physical
-        slot: 1
-      - id: i2
-        label: port2
-        mac_address: null
-        type: physical
-        slot: 2
-      - id: i3
-        label: port3
-        mac_address: null
-        type: physical
-        slot: 3
-      - id: i4
-        label: port4
-        mac_address: null
-        type: physical
-        slot: 4
-      - id: i5
-        label: port5
-        mac_address: null
-        type: physical
-        slot: 5
-      - id: i6
-        label: port6
-        mac_address: null
-        type: physical
-        slot: 6
-      - id: i7
-        label: port7
-        mac_address: null
-        type: physical
-        slot: 7
-  - boot_disk_size: null
-    configuration:
-      - name: user-data
-        content: |-
-          #cloud-config
-          hostname: inserthostname-here
-          manage_etc_hosts: True
-          system_info:
-            default_user:
-              name: cisco
-          password: cisco
-          chpasswd: { expire: False }
-          ssh_pwauth: True
-          ssh_authorized_keys:
-            - your-ssh-pubkey-line-goes-here
-    cpu_limit: null
-    cpus: null
-    data_volume: null
-    hide_links: false
-    id: n3
-    image_definition: null
-    label: ISE-MCP
-    node_definition: ubuntu
-    parameters: {}
-    priority: null
-    pyats:
-      username: null
-      password: null
-      enable_password: null
-    ram: null
-    tags: []
-    x: 0
-    y: -40
-    interfaces:
-      - id: i0
-        label: ens2
-        mac_address: null
-        type: physical
-        slot: 0
-  - boot_disk_size: null
-    configuration: []
-    cpu_limit: null
-    cpus: null
-    data_volume: null
-    hide_links: false
-    id: n4
-    image_definition: null
-    label: AI_AGENT
-    node_definition: ubuntu
-    parameters: {}
-    priority: null
-    pyats:
-      username: null
-      password: null
-      enable_password: null
-    ram: null
-    tags: []
-    x: -320
-    y: -40
-    interfaces:
-      - id: i0
-        label: ens2
-        mac_address: null
-        type: physical
-        slot: 0
+- boot_disk_size: null
+  configuration:
+  - name: ise-ztp.conf
+    content: 'hostname=inserthostname
+
+      ipv4_addr=192.168.1.253
+
+      ipv4_mask=255.255.255.0
+
+      ipv4_default_gw=192.168.1.1
+
+      # IPv6 is optional
+
+      #ipv6_addr=<IPv6 address>
+
+      #ipv6_default_gw=<IPv6 gateway address>
+
+      domain=cisco.com
+
+      primary_nameserver=8.8.8.8
+
+      # secondary and tertiary are optional
+
+      #secondary_nameserver=<IPv4 address>
+
+      #tertiary_nameserver=<IPv4 address>
+
+      primary_ntpserver=time.google.com
+
+      #secondary and tertiary are optional
+
+      #secondary_ntpserver=<IPv4 address or FQDN of the NTP server>
+
+      #tertiary_ntpserver=<IPv4 address or FQDN of the NTP server>
+
+      #timezone=<timezone>
+
+      #ssh=<true/false>
+
+      #username=<admin>
+
+      password=<ISE_BOOTSTRAP_PASSWORD>
+
+      # Public Key Authentication configuration is optional
+
+      #public_key=<Public Key>
+
+      # Repository Configuration are optional
+
+      #repository_name=<repository name>
+
+      #repository_protocol=<repository protocol>
+
+      #repository_server_name=<IPv4 address>
+
+      #repository_path=<repository path>
+
+      # Patch Information - optional
+
+      #patch=<patch filename>
+
+      # HotPatches Information - optional
+
+      #hotpatches=<hotpatch filename,comma separated list>
+
+      # services - optional
+
+      #ers=<true/false>
+
+      #openapi=<true/false>
+
+      #pxgrid=<true/false>
+
+      #pxGrid_Cloud=<true/false>
+
+      # Skipping specific checks
+
+      SkipIcmpChecks=true
+
+      SkipDnsChecks=true
+
+      SkipNtpChecks=true'
+  cpu_limit: null
+  cpus: null
+  data_volume: null
+  hide_links: false
+  id: n0
+  image_definition: null
+  label: ise-0
+  node_definition: ise
+  parameters: {}
+  priority: null
+  pyats:
+    username: <LOCAL_USERNAME>
+    password: <LOCAL_PASSWORD>
+    enable_password: <LOCAL_ENABLE_PASSWORD>
+  ram: null
+  tags: []
+  x: 160
+  y: -200
+  interfaces:
+  - id: i0
+    label: lo
+    mac_address: null
+    type: loopback
+  - id: i1
+    label: eth0
+    mac_address: null
+    type: physical
+    slot: 0
+- boot_disk_size: null
+  configuration:
+  - name: default
+    content: System Bridge
+  cpu_limit: null
+  cpus: null
+  data_volume: null
+  hide_links: false
+  id: n1
+  image_definition: null
+  label: ext-conn-0
+  node_definition: external_connector
+  parameters: {}
+  priority: null
+  pyats:
+    username: <LOCAL_USERNAME>
+    password: <LOCAL_PASSWORD>
+    enable_password: <LOCAL_ENABLE_PASSWORD>
+  ram: null
+  tags: []
+  x: -480
+  y: -200
+  interfaces:
+  - id: i0
+    label: port
+    mac_address: null
+    type: physical
+    slot: 0
+- boot_disk_size: null
+  configuration: []
+  cpu_limit: null
+  cpus: null
+  data_volume: null
+  hide_links: false
+  id: n2
+  image_definition: null
+  label: unmanaged-switch-0
+  node_definition: unmanaged_switch
+  parameters: {}
+  priority: null
+  pyats:
+    username: <LOCAL_USERNAME>
+    password: <LOCAL_PASSWORD>
+    enable_password: <LOCAL_ENABLE_PASSWORD>
+  ram: null
+  tags: []
+  x: -120
+  y: -200
+  interfaces:
+  - id: i0
+    label: port0
+    mac_address: null
+    type: physical
+    slot: 0
+  - id: i1
+    label: port1
+    mac_address: null
+    type: physical
+    slot: 1
+  - id: i2
+    label: port2
+    mac_address: null
+    type: physical
+    slot: 2
+  - id: i3
+    label: port3
+    mac_address: null
+    type: physical
+    slot: 3
+  - id: i4
+    label: port4
+    mac_address: null
+    type: physical
+    slot: 4
+  - id: i5
+    label: port5
+    mac_address: null
+    type: physical
+    slot: 5
+  - id: i6
+    label: port6
+    mac_address: null
+    type: physical
+    slot: 6
+  - id: i7
+    label: port7
+    mac_address: null
+    type: physical
+    slot: 7
+- boot_disk_size: null
+  configuration:
+  - name: user-data
+    content: "#cloud-config\nhostname: inserthostname-here\nmanage_etc_hosts: True\n\
+      system_info:\n  default_user:\n    <LOCAL_USERNAME>\npassword: <UBUNTU_PASSWORD>\n\
+      chpasswd: <CLOUD_INIT_PASSWORD_POLICY>\nssh_pwauth: True\nssh_authorized_keys:\n\
+      \  <SSH_PUBLIC_KEY>"
+  cpu_limit: null
+  cpus: null
+  data_volume: null
+  hide_links: false
+  id: n3
+  image_definition: null
+  label: ISE-MCP
+  node_definition: ubuntu
+  parameters: {}
+  priority: null
+  pyats:
+    username: <LOCAL_USERNAME>
+    password: <LOCAL_PASSWORD>
+    enable_password: <LOCAL_ENABLE_PASSWORD>
+  ram: null
+  tags: []
+  x: 0
+  y: -40
+  interfaces:
+  - id: i0
+    label: ens2
+    mac_address: null
+    type: physical
+    slot: 0
+- boot_disk_size: null
+  configuration: []
+  cpu_limit: null
+  cpus: null
+  data_volume: null
+  hide_links: false
+  id: n4
+  image_definition: null
+  label: AI_AGENT
+  node_definition: ubuntu
+  parameters: {}
+  priority: null
+  pyats:
+    username: <LOCAL_USERNAME>
+    password: <LOCAL_PASSWORD>
+    enable_password: <LOCAL_ENABLE_PASSWORD>
+  ram: null
+  tags: []
+  x: -320
+  y: -40
+  interfaces:
+  - id: i0
+    label: ens2
+    mac_address: null
+    type: physical
+    slot: 0
 links:
-  - id: l0
-    n1: n1
-    n2: n2
-    i1: i0
-    i2: i0
-    conditioning: {}
-    label: ext-conn-0-port<->unmanaged-switch-0-port0
-  - id: l1
-    n1: n2
-    n2: n0
-    i1: i1
-    i2: i1
-    conditioning: {}
-    label: unmanaged-switch-0-port1<->ise-0-eth0
-  - id: l2
-    n1: n3
-    n2: n2
-    i1: i0
-    i2: i2
-    conditioning: {}
-    label: ubuntu-0-ens2<->unmanaged-switch-0-port2
-  - id: l3
-    n1: n4
-    n2: n2
-    i1: i0
-    i2: i3
-    conditioning: {}
-    label: ubuntu-1-ens2<->unmanaged-switch-0-port3
+- id: l0
+  n1: n1
+  n2: n2
+  i1: i0
+  i2: i0
+  conditioning: {}
+  label: ext-conn-0-port<->unmanaged-switch-0-port0
+- id: l1
+  n1: n2
+  n2: n0
+  i1: i1
+  i2: i1
+  conditioning: {}
+  label: unmanaged-switch-0-port1<->ise-0-eth0
+- id: l2
+  n1: n3
+  n2: n2
+  i1: i0
+  i2: i2
+  conditioning: {}
+  label: ubuntu-0-ens2<->unmanaged-switch-0-port2
+- id: l3
+  n1: n4
+  n2: n2
+  i1: i0
+  i2: i3
+  conditioning: {}
+  label: ubuntu-1-ens2<->unmanaged-switch-0-port3
 lab:
   description: ''
   notes: ''

@@ -1,0 +1,18 @@
+# Local MCP and credential material
+mcp.log
+.env
+.env.*
+*.env
+
+# Private keys and certificate/key material
+*.key
+*.pem
+*.p12
+*.pfx
+
+# Common local credential files and directories
+credentials.*
+*.credentials
+*.secret
+secrets/
+.local/

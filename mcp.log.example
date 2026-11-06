@@ -1,0 +1,26 @@
+# Local-only dotenv-style configuration template.
+# Replace every value locally. Never commit mcp.log or paste its contents into chat/logs.
+
+# SSH access to the MCP host
+SSH_HOST=<MCP_HOSTNAME>
+SSH_PORT=<SSH_PORT>
+SSH_USERNAME=<SSH_USERNAME>
+SSH_KEY_PATH=<LOCAL_PRIVATE_KEY_PATH>
+# SSH_PASSWORD=<LOCAL_SSH_PASSWORD>
+
+# Remote service checkout
+MCP_REMOTE_WORKDIR=<REMOTE_MCP_WORKDIR>
+
+# Cisco ISE API access
+ISE_IP=<ISE_HOSTNAME_OR_ADDRESS>
+API_PORT=<ISE_API_PORT>
+API_USERNAME=<ISE_API_USERNAME>
+API_PWD=<ISE_API_PASSWORD>
+
+# TLS verification settings; set according to the approved environment
+ISE_VERIFY_SERVER_CERT=<TRUE_OR_FALSE>
+ISE_VERIFY_HOSTNAME=<TRUE_OR_FALSE>
+
+# MCP listener
+HOST=<MCP_LISTEN_ADDRESS>
+PORT=<MCP_LISTEN_PORT>

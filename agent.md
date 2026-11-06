@@ -1,101 +1,22 @@
-# Cisco ISE MCP Server — Agent Instructions
+# Cisco ISE MCP — Safe Agent Workflow
 
-## Goal
+## Purpose
 
-SSH to the Ubuntu MCP server, clone and configure Cisco's official ISE MCP server, install its required dependencies, force the ISE API connection to port `443`, test the MCP service, and return a concise report.
+This runbook describes a bounded, safe, read-only workflow for validating the Cisco ISE MCP lab. It is not authorization to change Cisco ISE, the CML lab, network devices, credentials, firewall rules, DNS, routing, TLS, or persistent services.
 
-The MCP server is the tool interface to Cisco ISE. After setup, use the MCP endpoint for ISE information and operations. Do not connect directly to ISE APIs for normal information retrieval. The ISE credentials are backend-only credentials used by the MCP server and must never be given to the MCP client or printed.
+Use it only for an explicitly approved target and scope. Perform read-only discovery first. Stop and request approval before any destructive, service-impacting, externally visible, credential-changing, or power-related action.
 
-Make only the changes required to install the MCP server, its dependencies, and the requested permanent service.
+## Local credentials
 
-When this runbook is used from the lab repository, the instruction file is expected at:
-
-```text
-/cml-ise-mcp/agent.md
-```
-
-## Credential source
-
-The only credential source is the AI agent's local file:
+The only local credential source is the operator-controlled, untracked file:
 
 ```text
 ~/cml-ise-mcp/mcp.log
 ```
 
-The file uses dotenv-style `KEY=VALUE` entries and contains both SSH and ISE values.
+Use `mcp.log.example` as the template. Keep `mcp.log` local and mode `600`; never commit, upload, paste, print, echo, or report its contents. Read only the named values required for the approved check. Do not use `source`, `.`, or `eval` on the file, and do not put credentials in command arguments, URLs, service definitions, logs, or MCP messages.
 
-Example:
-
-```dotenv
-# Ubuntu MCP server SSH access
-SSH_HOST=ubuntu-mcp.example
-SSH_PORT=22
-SSH_USERNAME=operator
-SSH_KEY_PATH=/home/agent/.ssh/ubuntu_mcp
-# SSH_PASSWORD=REPLACE_WITH_LOCAL_VALUE
-
-# Remote setup directory
-MCP_REMOTE_WORKDIR=/home/operator/cisco-ise-mcp-official
-
-# Cisco ISE API access
-ISE_IP=ise-pan.example
-API_PORT=443
-API_USERNAME=ise_mcp_readonly
-API_PWD=REPLACE_WITH_ISE_API_PASSWORD
-
-# TLS verification settings used by this lab
-# Keep the values found in mcp.log; do not silently change them.
-ISE_VERIFY_SERVER_CERT=false
-ISE_VERIFY_HOSTNAME=false
-
-# MCP listener
-HOST=0.0.0.0
-PORT=5000
-```
-
-Use the file as it exists in this lab. Do not change its permissions or contents.
-
-Read only the required named values. Do not use `source`, `.`, or `eval` on the file.
-
-Never print, echo, log, upload, commit, or report:
-
-- passwords
-- private keys
-- tokens
-- authorization headers
-- complete `.env` contents
-- contents of `~/cml-ise-mcp/mcp.log`
-
-SSH credentials are used only for SSH. ISE credentials are written only to the remote MCP server `.env`.
-
-## Hard requirements
-
-- Clone only:
-  `https://github.com/CiscoDevNet/cisco-ise-mcp-official.git`
-- ISE API port: **443**
-- Never use ISE port `9060`.
-- MCP listener port: **5000**
-- Do not modify source code.
-- Do not modify Cisco ISE configuration.
-- Do not modify firewall, DNS, routing, or TLS settings.
-- Install one systemd service for the MCP server and leave it enabled and running.
-- Do not install cron, Docker, or supervisor services.
-- Do not overwrite an existing checkout.
-- Do not invoke mutating ISE or MCP tools.
-- Do not expose credentials.
-- Do not make unrelated changes.
-
-## 1. Read and validate local configuration
-
-Confirm that this file exists and is readable:
-
-```text
-~/cml-ise-mcp/mcp.log
-```
-
-The file may already be part of the lab repository layout. Use it as provided for this proof-of-value run. Do not move, rename, delete, rewrite, or remediate it. Do not block the run because of Git tracking status or file permissions; these are accepted lab conditions. Continue without printing its contents or exposing any credential values.
-
-Required values:
+Expected keys are:
 
 ```text
 SSH_HOST
@@ -113,328 +34,50 @@ HOST
 PORT
 ```
 
-Stop if required values are missing or if:
+Treat all values as sensitive except where a value is explicitly a non-secret operational setting. Validate them only as pass/fail. The ISE API port must be exactly `443`; the MCP listener port must be exactly `5000` for this lab convention. Do not report the actual host, address, username, password, key path, token, or environment-file contents.
 
-```text
-API_PORT is not exactly 443
-PORT is not exactly 5000
-```
+## Discovery before validation
 
-For this isolated CML proof-of-value lab, accept the TLS values found in `mcp.log`, including `false/false`. Do not silently change them and do not stop because TLS verification is disabled.
+Record only sanitized facts:
 
-## 2. SSH to the Ubuntu MCP server
+- target identity and approved scope;
+- repository and checkout state;
+- service/process state;
+- listener and endpoint availability;
+- whether credentials are present, without displaying values.
 
-Use the SSH values from `~/cml-ise-mcp/mcp.log`.
+Keep SSH host-key verification enabled. Never disable host-key checks or use `StrictHostKeyChecking=no`. Do not reuse an existing remote checkout if the approved procedure requires a new one. Do not delete or overwrite data as part of discovery.
 
-Keep SSH host-key verification enabled. Never use:
+## Read-only MCP validation
 
-```text
-StrictHostKeyChecking=no
-```
+Use only the approved MCP endpoint. A safe validation sequence is:
 
-If password authentication is required:
+1. MCP `initialize`.
+2. `notifications/initialized`.
+3. `tools/list`.
+4. One specifically approved, read-only Cisco ISE query, if the target and query are in scope.
 
-- use `sshpass -e` with `SSHPASS` supplied through the environment,
-- never use `sshpass -p`,
-- never place the password on a command line.
+Never invoke tools that create, update, delete, restart, disable, or otherwise mutate Cisco ISE or the MCP service. Do not treat successful MCP initialization or tool discovery as proof that Cisco ISE-backed retrieval succeeded. Report transport success and ISE data retrieval separately.
 
-If `sshpass` is missing on the local agent device and password authentication is required, install this one local dependency:
+Do not change source code or Cisco ISE configuration. Do not install packages, create services, change firewall/DNS/routing/TLS settings, or modify CML lifecycle state during validation without separate explicit approval.
 
-```bash
-sudo apt-get update
-sudo apt-get install -y sshpass
-```
+## Safe handling of remote configuration
 
-Do not install `sshpass` on the remote MCP server.
-
-Use the remote work directory from `MCP_REMOTE_WORKDIR`.
-
-If the directory already exists, stop. Do not delete, overwrite, reset, or reuse it.
-
-## 3. Install only required Ubuntu dependencies
-
-After connecting, check:
-
-```bash
-command -v git
-command -v curl
-command -v python3
-command -v uv
-python3 --version
-```
-
-Install only missing required packages. If `sudo` is available:
-
-```bash
-sudo apt-get update
-sudo apt-get install -y ca-certificates curl git python3 python3-venv
-```
-
-The repository requires Python 3.12-compatible Python. Verify:
-
-```bash
-python3 --version
-```
-
-If Python 3.12 compatibility is not available, stop. Do not install an unrelated Python version or change system alternatives.
-
-If `uv` is missing, install it with the official installer:
-
-```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
-```
-
-Load the installed binary path for the current session and verify:
-
-```bash
-uv --version
-```
-
-Do not install Docker, system services, firewall packages, unrelated Python packages, alternate Python versions, or `sshpass` on the remote server.
-
-## 4. Clone the official repository
-
-```bash
-git clone -- \
-  https://github.com/CiscoDevNet/cisco-ise-mcp-official.git \
-  "$MCP_REMOTE_WORKDIR"
-
-cd "$MCP_REMOTE_WORKDIR"
-git remote get-url origin
-git rev-parse HEAD
-```
-
-Verify that the origin is exactly:
-
-```text
-https://github.com/CiscoDevNet/cisco-ise-mcp-official.git
-```
-
-Record the actual commit ID. Do not modify repository files.
-
-## 5. Create the remote `.env`
-
-Create:
-
-```text
-$MCP_REMOTE_WORKDIR/.env
-```
-
-Populate it from the ISE values in `~/cml-ise-mcp/mcp.log`:
-
-```dotenv
-ISE_IP=<value from mcp.log>
-API_PORT=443
-API_USERNAME=<value from mcp.log>
-API_PWD=<value from mcp.log>
-
-ISE_VERIFY_SERVER_CERT=<value from mcp.log>
-ISE_VERIFY_HOSTNAME=<value from mcp.log>
-
-HOST=0.0.0.0
-PORT=5000
-```
-
-Transfer the file through SSH stdin. Do not place credentials in command arguments.
-
-Set restrictive permissions:
-
-```bash
-chmod 600 "$MCP_REMOTE_WORKDIR/.env"
-```
-
-Validate only pass/fail:
-
-```text
-ISE_IP present
-API_USERNAME present
-API_PWD present
-API_PORT=443
-PORT=5000
-TLS verification setting recorded
-```
-
-Do not print values. Confirm `.env` is not tracked by Git.
-
-## 6. Install application dependencies
-
-```bash
-cd "$MCP_REMOTE_WORKDIR"
-uv sync --frozen
-```
-
-Verify:
-
-```bash
-test -x .venv/bin/python
-.venv/bin/python --version
-```
-
-Do not run:
-
-```text
-uv add
-uv remove
-pip install
-```
-
-Do not modify `pyproject.toml`, `uv.lock`, or application source files.
-
-If `uv sync --frozen` fails because the lock file is missing or inconsistent, stop and report the exact error. Do not regenerate or modify the lock file.
-
-## 7. Install and start the permanent MCP service
-
-Confirm TCP port `5000` is free. Do not kill or replace an existing process.
-
-Create one systemd unit at `/etc/systemd/system/cisco-ise-mcp.service` using the remote SSH username and `MCP_REMOTE_WORKDIR` values from `mcp.log`:
-
-```ini
-[Unit]
-Description=Cisco ISE MCP Server
-After=network-online.target
-Wants=network-online.target
-
-[Service]
-Type=simple
-User=<SSH_USERNAME>
-WorkingDirectory=<MCP_REMOTE_WORKDIR>
-EnvironmentFile=<MCP_REMOTE_WORKDIR>/.env
-ExecStart=<MCP_REMOTE_WORKDIR>/.venv/bin/python server.py
-Restart=on-failure
-RestartSec=5
-
-[Install]
-WantedBy=multi-user.target
-```
-
-Do not place any password or secret directly in the unit file. The unit must reference `.env` through `EnvironmentFile`.
-
-Install and start only this requested service:
-
-```bash
-sudo systemctl daemon-reload
-sudo systemctl enable --now cisco-ise-mcp.service
-```
-
-Verify:
-
-```bash
-systemctl is-enabled cisco-ise-mcp.service
-systemctl is-active cisco-ise-mcp.service
-sudo systemctl status cisco-ise-mcp.service --no-pager
-```
-
-The service must remain enabled and running after setup. Do not stop it after testing.
-
-## 8. Validate through the MCP link
-
-Use:
-
-```text
-http://<MCP_SERVER_ADDRESS>:5000/mcp/
-```
-
-Perform:
-
-1. MCP `initialize`
-2. `notifications/initialized`
-3. `tools/list`
-4. One safe, read-only ISE-backed MCP query
-
-Expected transport results:
-
-```text
-initialize: HTTP 200
-tools/list: HTTP 200
-```
-
-Do not invoke mutating tools.
-
-Distinguish clearly between:
-
-```text
-MCP transport succeeded
-```
-
-and:
-
-```text
-ISE-backed data retrieval succeeded
-```
-
-Do not claim ISE connectivity based only on MCP initialization.
-
-## 9. Verify the permanent service
-
-After MCP validation:
-
-- confirm `cisco-ise-mcp.service` is still active,
-- confirm it is enabled,
-- confirm TCP port `5000` is listening,
-- confirm the MCP endpoint still responds,
-- do not stop or disable the service,
-- do not delete the checkout automatically.
+If a separately approved host-side setup requires a remote `.env`, transfer it through a protected stdin/channel, set mode `600`, verify that it is untracked, and validate only presence/format checks. Never display the file. Never place credentials in a systemd unit, shell history, process arguments, or diagnostic output.
 
 ## Final report
 
-Return only this concise, sanitized report:
+Return a concise sanitized report containing:
 
-```markdown
-# Cisco ISE MCP Server Setup Report
+- status: `PASS`, `PARTIAL`, `BLOCKED`, or `FAILED`;
+- observed timestamp;
+- non-secret target identifier;
+- repository/check-out result;
+- API port `443` and MCP port `5000` pass/fail results;
+- MCP initialize and tools/list pass/fail results;
+- read-only ISE query pass/fail/not-run result;
+- credential exposure: `NO`;
+- changes made: `NONE`, unless separately approved and explicitly verified;
+- observed issues only.
 
-- Status: PASS / PARTIAL / BLOCKED / FAILED
-- Timestamp UTC: <observed timestamp>
-- Remote host: <non-secret identifier>
-- Work directory: <remote path>
-
-## SSH
-
-- SSH connection: PASS / FAILED
-- Host-key verification: PASS / FAILED
-- Credentials exposed: NO
-
-## Repository
-
-- Official repository cloned: YES / NO
-- Origin verified: YES / NO
-- Commit: <observed commit>
-- Existing checkout found: YES / NO
-- Source modified: NO
-
-## Dependencies
-
-- Required Ubuntu dependencies: PASS / FAILED
-- Python 3.12 compatibility: PASS / FAILED
-- uv available: YES / NO
-- uv sync --frozen: PASS / FAILED
-
-## Configuration
-
-- Local credential file: ~/cml-ise-mcp/mcp.log
-- API_PORT=443: CONFIRMED / NOT CONFIRMED
-- PORT=5000: CONFIRMED / NOT CONFIRMED
-- TLS verification: ENABLED / DISABLED (lab warning)
-- Credentials printed or reported: NO
-
-## MCP validation
-
-- MCP endpoint: <non-secret endpoint>
-- initialize: PASS / FAILED
-- tools/list: PASS / FAILED
-- Read-only ISE query: PASS / FAILED / NOT RUN
-- Actual ISE data returned: YES / NO
-
-## Cleanup
-
-- Persistent service installed: YES / NO
-- Persistent service enabled: YES / NO
-- Persistent service running: YES / NO
-- ISE configuration changed: NO
-- Unrequested changes made: NO
-
-## Issues
-
-- <Observed issues only>
-```
-
-Report `PASS` only if SSH, cloning, dependency installation, `API_PORT=443`, `PORT=5000`, the systemd service is installed/enabled/running, MCP initialization, tool discovery, and a read-only ISE-backed query all succeed. Otherwise report `PARTIAL`, `BLOCKED`, or `FAILED` with the exact observed reason. Leave the MCP service running for permanent use.
+Never include passwords, private keys, tokens, authorization headers, private addresses, raw `mcp.log`, complete `.env` contents, or unredacted command output.
