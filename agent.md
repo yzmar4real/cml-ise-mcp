@@ -6,7 +6,7 @@ SSH to the Ubuntu MCP server, clone and configure Cisco's official ISE MCP serve
 
 The MCP server is the tool interface to Cisco ISE. After setup, use the MCP endpoint for ISE information and operations. Do not connect directly to ISE APIs for normal information retrieval. The ISE credentials are backend-only credentials used by the MCP server and must never be given to the MCP client or printed.
 
-Change nothing else.
+Make only the changes required to install the MCP server, its dependencies, and the requested permanent service.
 
 When this runbook is used from the lab repository, the instruction file is expected at:
 
@@ -78,7 +78,8 @@ SSH credentials are used only for SSH. ISE credentials are written only to the r
 - Do not modify source code.
 - Do not modify Cisco ISE configuration.
 - Do not modify firewall, DNS, routing, or TLS settings.
-- Do not install a systemd service, cron job, Docker service, or supervisor.
+- Install one systemd service for the MCP server and leave it enabled and running.
+- Do not install cron, Docker, or supervisor services.
 - Do not overwrite an existing checkout.
 - Do not invoke mutating ISE or MCP tools.
 - Do not expose credentials.
@@ -281,22 +282,49 @@ Do not modify `pyproject.toml`, `uv.lock`, or application source files.
 
 If `uv sync --frozen` fails because the lock file is missing or inconsistent, stop and report the exact error. Do not regenerate or modify the lock file.
 
-## 7. Start the MCP server temporarily
+## 7. Install and start the permanent MCP service
 
 Confirm TCP port `5000` is free. Do not kill or replace an existing process.
 
-Start the server:
+Create one systemd unit at `/etc/systemd/system/cisco-ise-mcp.service` using the remote SSH username and `MCP_REMOTE_WORKDIR` values from `mcp.log`:
 
-```bash
-cd "$MCP_REMOTE_WORKDIR"
+```ini
+[Unit]
+Description=Cisco ISE MCP Server
+After=network-online.target
+Wants=network-online.target
 
-nohup uv run server.py \
-  > server.log 2>&1 < /dev/null &
+[Service]
+Type=simple
+User=<SSH_USERNAME>
+WorkingDirectory=<MCP_REMOTE_WORKDIR>
+EnvironmentFile=<MCP_REMOTE_WORKDIR>/.env
+ExecStart=<MCP_REMOTE_WORKDIR>/.venv/bin/python server.py
+Restart=on-failure
+RestartSec=5
 
-echo $! > server.pid
+[Install]
+WantedBy=multi-user.target
 ```
 
-Do not install a persistent service.
+Do not place any password or secret directly in the unit file. The unit must reference `.env` through `EnvironmentFile`.
+
+Install and start only this requested service:
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable --now cisco-ise-mcp.service
+```
+
+Verify:
+
+```bash
+systemctl is-enabled cisco-ise-mcp.service
+systemctl is-active cisco-ise-mcp.service
+sudo systemctl status cisco-ise-mcp.service --no-pager
+```
+
+The service must remain enabled and running after setup. Do not stop it after testing.
 
 ## 8. Validate through the MCP link
 
@@ -336,13 +364,15 @@ ISE-backed data retrieval succeeded
 
 Do not claim ISE connectivity based only on MCP initialization.
 
-## 9. Stop the temporary process
+## 9. Verify the permanent service
 
-When testing is complete:
+After MCP validation:
 
-- stop only the PID recorded in `server.pid`,
-- verify that it stopped,
-- do not use `pkill`,
+- confirm `cisco-ise-mcp.service` is still active,
+- confirm it is enabled,
+- confirm TCP port `5000` is listening,
+- confirm the MCP endpoint still responds,
+- do not stop or disable the service,
 - do not delete the checkout automatically.
 
 ## Final report
@@ -396,8 +426,9 @@ Return only this concise, sanitized report:
 
 ## Cleanup
 
-- Temporary process stopped: YES / NO
-- Persistent service installed: NO
+- Persistent service installed: YES / NO
+- Persistent service enabled: YES / NO
+- Persistent service running: YES / NO
 - ISE configuration changed: NO
 - Unrequested changes made: NO
 
@@ -406,4 +437,4 @@ Return only this concise, sanitized report:
 - <Observed issues only>
 ```
 
-Report `PASS` only if SSH, cloning, dependency installation, `API_PORT=443`, `PORT=5000`, MCP initialization, tool discovery, and a read-only ISE-backed query all succeed. Otherwise report `PARTIAL`, `BLOCKED`, or `FAILED` with the exact observed reason.
+Report `PASS` only if SSH, cloning, dependency installation, `API_PORT=443`, `PORT=5000`, the systemd service is installed/enabled/running, MCP initialization, tool discovery, and a read-only ISE-backed query all succeed. Otherwise report `PARTIAL`, `BLOCKED`, or `FAILED` with the exact observed reason. Leave the MCP service running for permanent use.
