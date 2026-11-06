@@ -4,6 +4,8 @@
 
 SSH to the Ubuntu MCP server, clone and configure Cisco's official ISE MCP server, install its required dependencies, force the ISE API connection to port `443`, test the MCP service, and return a concise report.
 
+The MCP server is the tool interface to Cisco ISE. After setup, use the MCP endpoint for ISE information and operations. Do not connect directly to ISE APIs for normal information retrieval. The ISE credentials are backend-only credentials used by the MCP server and must never be given to the MCP client or printed.
+
 Change nothing else.
 
 ## Credential source
