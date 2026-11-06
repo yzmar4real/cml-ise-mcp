@@ -30,6 +30,31 @@ The external connector, Cisco ISE node, MCP host, and agent host connect through
 - `mcp.log.example` — dotenv-style configuration template containing placeholders only.
 - `.gitignore` — excludes the local credential file and common local credential artifacts.
 
+## Validation screenshots
+
+The 16 credential-safe validation screenshots below are committed in `docs/screenshots/`. The images are sanitized for publication and do not include raw credential material.
+
+1. [Validation image 01](docs/screenshots/ise-mcp-image01-sanitized.png)
+2. [Validation image 02](docs/screenshots/ise-mcp-image02-sanitized.png)
+3. [Validation image 03](docs/screenshots/ise-mcp-image03-sanitized.png)
+4. [Validation image 04](docs/screenshots/ise-mcp-image04-sanitized.png)
+5. [Validation image 05](docs/screenshots/ise-mcp-image05-sanitized.png)
+6. [Validation image 06](docs/screenshots/ise-mcp-image06-sanitized.png)
+7. [Validation image 07](docs/screenshots/ise-mcp-image07-sanitized.png)
+8. [Validation image 08](docs/screenshots/ise-mcp-image08-sanitized.png)
+9. [Validation image 09](docs/screenshots/ise-mcp-image09-sanitized.png)
+10. [Validation image 10](docs/screenshots/ise-mcp-image10-sanitized.png)
+11. [Validation image 11](docs/screenshots/ise-mcp-image11-sanitized.png)
+12. [Validation image 12](docs/screenshots/ise-mcp-image12-sanitized.png)
+13. [Validation image 13](docs/screenshots/ise-mcp-image13-sanitized.png)
+14. [Validation image 14](docs/screenshots/ise-mcp-image14-sanitized.png)
+15. [Validation image 15](docs/screenshots/ise-mcp-image15-sanitized.png)
+16. [Validation image 16](docs/screenshots/ise-mcp-image16-sanitized.png)
+
+## Future article
+
+**Substack article:** Link will be added after publication.
+
 ## Prerequisites
 
 - A Cisco Modeling Labs installation with the required Cisco ISE and Ubuntu images.
