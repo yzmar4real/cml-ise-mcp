@@ -8,12 +8,18 @@ The MCP server is the tool interface to Cisco ISE. After setup, use the MCP endp
 
 Change nothing else.
 
+When this runbook is used from the lab repository, the instruction file is expected at:
+
+```text
+/cml-ise-mcp/agent.md
+```
+
 ## Credential source
 
 The only credential source is the AI agent's local file:
 
 ```text
-~/ise-mcp.log
+~/cml-ise-mcp/mcp.log
 ```
 
 The file uses dotenv-style `KEY=VALUE` entries and contains both SSH and ISE values.
@@ -37,9 +43,10 @@ API_PORT=443
 API_USERNAME=ise_mcp_readonly
 API_PWD=REPLACE_WITH_ISE_API_PASSWORD
 
-# TLS verification
-ISE_VERIFY_SERVER_CERT=true
-ISE_VERIFY_HOSTNAME=true
+# TLS verification settings used by this lab
+# Keep the values found in mcp.log; do not silently change them.
+ISE_VERIFY_SERVER_CERT=false
+ISE_VERIFY_HOSTNAME=false
 
 # MCP listener
 HOST=0.0.0.0
@@ -49,7 +56,7 @@ PORT=5000
 Protect the file:
 
 ```bash
-chmod 600 ~/ise-mcp.log
+chmod 600 ~/cml-ise-mcp/mcp.log
 ```
 
 Read only the required named values. Do not use `source`, `.`, or `eval` on the file.
@@ -61,7 +68,7 @@ Never print, echo, log, upload, commit, or report:
 - tokens
 - authorization headers
 - complete `.env` contents
-- contents of `~/ise-mcp.log`
+- contents of `~/cml-ise-mcp/mcp.log`
 
 SSH credentials are used only for SSH. ISE credentials are written only to the remote MCP server `.env`.
 
@@ -86,8 +93,10 @@ SSH credentials are used only for SSH. ISE credentials are written only to the r
 Confirm that this file exists and is readable:
 
 ```text
-~/ise-mcp.log
+~/cml-ise-mcp/mcp.log
 ```
+
+The file may already be part of the lab repository layout. Use it as provided for this proof-of-value run. Do not move, rename, delete, rewrite, or remediate it. Do not block the run because of Git tracking status or file permissions; these are accepted lab conditions. Continue without printing its contents or exposing any credential values.
 
 Required values:
 
@@ -112,14 +121,13 @@ Stop if required values are missing or if:
 ```text
 API_PORT is not exactly 443
 PORT is not exactly 5000
-TLS verification is disabled
 ```
 
-Do not silently correct invalid values.
+For this isolated CML proof-of-value lab, accept the TLS values found in `mcp.log`, including `false/false`. Do not silently change them and do not stop because TLS verification is disabled.
 
 ## 2. SSH to the Ubuntu MCP server
 
-Use the SSH values from `~/ise-mcp.log`.
+Use the SSH values from `~/cml-ise-mcp/mcp.log`.
 
 Keep SSH host-key verification enabled. Never use:
 
@@ -206,7 +214,7 @@ Create:
 $MCP_REMOTE_WORKDIR/.env
 ```
 
-Populate it from the ISE values in `~/ise-mcp.log`:
+Populate it from the ISE values in `~/cml-ise-mcp/mcp.log`:
 
 ```dotenv
 ISE_IP=<value from ise-mcp.log>
@@ -237,7 +245,7 @@ API_USERNAME present
 API_PWD present
 API_PORT=443
 PORT=5000
-TLS verification enabled
+TLS verification setting recorded
 ```
 
 Do not print values. Confirm `.env` is not tracked by Git.
@@ -367,11 +375,11 @@ Return only this concise, sanitized report:
 
 ## Configuration
 
-- Local credential file: ~/ise-mcp.log
+- Local credential file: ~/cml-ise-mcp/mcp.log
 - API_PORT=443: CONFIRMED / NOT CONFIRMED
 - PORT=5000: CONFIRMED / NOT CONFIRMED
-- TLS verification enabled: YES / NO
-- Credentials reported or committed: NO
+- TLS verification: ENABLED / DISABLED (lab warning)
+- Credentials printed or reported: NO
 
 ## MCP validation
 
